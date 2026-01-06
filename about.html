@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin - Pesanan Masuk</title>
+</head>
+<body>
+
+<h2>Pesanan Masuk</h2>
+<div id="orders"></div>
+
+<script>
+let lastCount = 0;
+
+function loadOrders() {
+  fetch("php3.php")
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("orders").innerHTML = "";
+
+      if (data.length > lastCount) {
+        notifyAdmin();
+      }
+
+      lastCount = data.length;
+
+      data.forEach(o => {
+        document.getElementById("orders").innerHTML += `
+          <p><b>${o.name}</b> - ${o.total}</p>
+        `;
+      });
+    });
+}
+
+function notifyAdmin() {
+  if (Notification.permission === "granted") {
+    new Notification("📦 Pesanan Masuk!", {
+      body: "Ada pesanan baru di icenn.Shop"
+    });
+  }
+}
+
+Notification.requestPermission();
+setInterval(loadOrders, 5000); // cek tiap 5 detik
+</script>
+
+</body>
+</html>
